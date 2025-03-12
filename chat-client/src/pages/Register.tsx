@@ -37,10 +37,17 @@ const Register = () => {
       return;
     }
 
-    const { data, status } = await axios.post("/auth/register", {
-      username,
-      password,
-    });
+    const { data, status } = await axios.post(
+      "/auth/register",
+      {
+        username,
+        password,
+      },
+      {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
 
     if (status === 201) {
       navigate("/");
