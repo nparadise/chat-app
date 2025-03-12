@@ -7,7 +7,7 @@
     padding: 0;
 
     @variant dark {
-      @apply bg-neutral-950;
+      @apply bg-neutral-950 text-white;
     }
   }
 }
