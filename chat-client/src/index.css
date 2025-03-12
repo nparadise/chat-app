@@ -5,6 +5,10 @@
   body {
     margin: 0;
     padding: 0;
+
+    @variant dark {
+      @apply bg-neutral-950;
+    }
   }
 }
 
