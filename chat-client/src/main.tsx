@@ -1,3 +1,4 @@
+import axios from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
@@ -9,6 +10,8 @@ import Register from "./pages/Register.tsx";
 
 import "./index.css";
 import MainLayout from "./layouts/MainLayout.tsx";
+
+axios.defaults.baseURL = "http://localhost:5000/api";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
