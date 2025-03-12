@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/userModel';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
@@ -12,7 +15,7 @@ router.post('/register', async (req: Request, res: Response) => {
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      res.status(400).json({ message: '이미 존재하는 사용자입니다.' });
+      res.status(400).json({ message: '이미 존재하는 사용자입니다' });
       return;
     }
     const user = new User({ username, password });
