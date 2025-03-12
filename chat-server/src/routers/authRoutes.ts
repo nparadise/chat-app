@@ -37,7 +37,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      res.status(400).json({ message: '비밀번호가 일치하지 않습니다. ' });
+      res.status(400).json({ message: '비밀번호가 일치하지 않습니다.' });
     }
 
     const payload = { id: user._id, username: user.username };
@@ -47,6 +47,33 @@ router.post('/login', async (req: Request, res: Response) => {
     res.json({ message: '로그인 성공', token });
   } catch (error) {
     res.status(500).json({ message: '서버 오류' });
+  }
+});
+
+// 로그아웃
+router.post('/logout', async (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: '로그아웃 성공' });
+});
+
+// 로그인 상태 확인
+router.get('/me', async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    res.status(401).json({ message: '로그인이 필요합니다.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string };
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+      return;
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(401).json({ message: '인증 실패' });
   }
 });
 
