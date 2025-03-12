@@ -1,1 +1,17 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@layer components {
+  div#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+}
