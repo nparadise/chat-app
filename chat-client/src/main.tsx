@@ -1,31 +1,18 @@
 import axios from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
 
-import App from "./App.tsx";
-import Chat from "./components/Chat.tsx";
-import Login from "./pages/Login.tsx";
-import Register from "./pages/Register.tsx";
+import Router from "./Router.tsx";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
 
 import "./index.css";
-import MainLayout from "./layouts/MainLayout.tsx";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<App />} />
-
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-
-          <Route path="/chat" element={<Chat />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <Router />
+    </AuthProvider>
   </StrictMode>,
 );
