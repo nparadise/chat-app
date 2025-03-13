@@ -1,9 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,28 +16,13 @@ const Login = () => {
     });
   };
 
-  const login = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { username, password } = formData;
 
     try {
-      const res = await axios.post(
-        "/auth/login",
-        {
-          username,
-          password,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-
-      if (res.status === 200) {
-        navigate("/");
-        return;
-      }
-      setErrorMessage(res.data.message);
+      const errorMessage = await login(username, password);
+      setErrorMessage(errorMessage);
     } catch (error) {
       console.log(error);
     }
@@ -46,8 +30,8 @@ const Login = () => {
 
   return (
     <form
-      onSubmit={login}
-      className="box-content w-xs p-4 space-y-4 rounded-sm shadow-lg bg-white dark:bg-neutral-800 dark:text-white"
+      onSubmit={handleSubmit}
+      className="box-content w-xs space-y-4 rounded-sm bg-white p-4 shadow-lg dark:bg-neutral-800 dark:text-white"
     >
       <h2 className="text-center text-2xl font-bold">Login</h2>
       <div>
@@ -58,7 +42,7 @@ const Login = () => {
           name="username"
           value={formData.username}
           onChange={handleChange}
-          className="block w-full p-2 rounded-xs outline-blue-700 bg-neutral-200 text-black"
+          className="block w-full rounded-xs bg-neutral-200 p-2 text-black outline-blue-700"
         />
       </div>
       <div>
@@ -69,15 +53,15 @@ const Login = () => {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className="block w-full p-2 rounded-xs outline-blue-700 bg-neutral-200 text-black"
+          className="block w-full rounded-xs bg-neutral-200 p-2 text-black outline-blue-700"
         />
       </div>
       {errorMessage !== "" ? (
-        <p className="w-full text-red-600 text-wrap">{errorMessage}</p>
+        <p className="w-full text-wrap text-red-600">{errorMessage}</p>
       ) : null}
       <button
         type="submit"
-        className="block mx-auto px-4 py-1.5 rounded-sm bg-blue-700 text-white font-bold"
+        className="mx-auto block rounded-sm bg-blue-700 px-4 py-1.5 font-bold text-white"
       >
         Login
       </button>

@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  --animate-appear-from-left: appear-from-left 2s ease-in-out;
+
+  @keyframes appear-from-left {
+    0% {
+      transform: translate(-5rem);
+      opacity: 0%;
+    }
+    100% {
+      transform: translate(0);
+      opacity: 100%;
+    }
+  }
+}
+
+@theme {
+  --animate-appear-from-right: appear-from-right 2s ease-in-out;
+
+  @keyframes appear-from-right {
+    0% {
+      transform: translate(5rem);
+      opacity: 0%;
+    }
+    100% {
+      transform: translate(0);
+      opacity: 100%;
+    }
+  }
+}
+
 @layer base {
   html,
   body {
