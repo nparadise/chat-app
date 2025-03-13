@@ -24,8 +24,10 @@ function App() {
     <>
       {user ? (
         <div>
-          <p className="animate-appear-from-left text-3xl">Welcome</p>
-          <p className="mb-8 animate-appear-from-right text-5xl">
+          <p className="animate-appear-from-left font-serif text-2xl">
+            Welcome,
+          </p>
+          <p className="mb-8 animate-appear-from-right font-serif text-5xl">
             {user.username}
           </p>
           <div className="space-x-2 text-center">
@@ -45,7 +47,26 @@ function App() {
           </div>
         </div>
       ) : (
-        <div>Without User</div>
+        <div className="space-x-2">
+          <p className="animate-appear-from-left font-serif text-2xl">
+            Welcome,
+          </p>
+          <p className="mb-6 animate-appear-from-right font-serif text-5xl">
+            Guest
+          </p>
+          <Link
+            to="/register"
+            className="inline-block rounded-sm bg-blue-700 px-2 py-1 hover:bg-blue-800"
+          >
+            회원가입
+          </Link>
+          <Link
+            to="/login"
+            className="inline-block rounded-sm bg-blue-700 px-2 py-1 hover:bg-blue-800"
+          >
+            로그인
+          </Link>
+        </div>
       )}
     </>
   );
