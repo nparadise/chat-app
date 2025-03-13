@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const Chat = () => {
   const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:5000');
+    const socket = new WebSocket("ws://localhost:5000");
 
     socket.onopen = () => {
-      console.log('WebSocket 연결됨');
+      console.log("WebSocket 연결됨");
       setWs(socket);
     };
 
@@ -18,7 +18,7 @@ const Chat = () => {
     };
 
     socket.onclose = () => {
-      console.log('WebSocket 연결 종료');
+      console.log("WebSocket 연결 종료");
     };
 
     return () => {
@@ -29,22 +29,38 @@ const Chat = () => {
   const sendMessage = () => {
     if (ws && input.trim()) {
       ws.send(input);
-      setInput('');
+      setInput("");
+    }
+  };
+
+  const onPressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      sendMessage();
     }
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-2">실시간 채팅</h2>
-      <div className="border p-2 h-40 overflow-auto mb-2">
+    <div className="mx-auto max-w-md p-4">
+      <h2 className="mb-2 text-xl font-bold">실시간 채팅</h2>
+      <div className="mb-2 min-h-60 overflow-auto border p-2">
         {messages.map((message, index) => (
-          <p key={index} className="bg-gray-200 p-1 rounded my-1">
+          <p key={index} className="my-1 rounded bg-neutral-800 p-1 text-white">
             {message}
           </p>
         ))}
       </div>
-      <input type="text" value={input} onChange={(e) => setInput(e.target.value)} className="border p-2 w-full" />
-      <button type="button" onClick={sendMessage} className="bg-blue-500 text-white p-2 my-2 w-full">
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={onPressEnter}
+        className="w-full border p-2"
+      />
+      <button
+        type="button"
+        onClick={sendMessage}
+        className="my-2 w-full bg-blue-500 p-2 text-white"
+      >
         전송
       </button>
     </div>

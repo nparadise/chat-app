@@ -1,11 +1,10 @@
-import Chat from '../components/Chat';
+import Chat from "../components/Chat";
 
 const ChatRoom = () => {
   return (
-    <div>
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <Chat />
-      </div>
+    <div className="flex items-center justify-center">
+      <Chat />
+      {/* TODO: 참가자 목록 */}
     </div>
   );
 };
