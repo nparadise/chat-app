@@ -4,15 +4,15 @@ import { Outlet, useNavigate } from "react-router";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate("/login", { replace: true });
     }
-  }, [user, navigate]);
+  }, [loading, user, navigate]);
 
-  return <Outlet />;
+  return user ? <Outlet /> : <p>Loading...</p>;
 };
 
 export default ProtectedRoute;

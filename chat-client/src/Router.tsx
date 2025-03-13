@@ -6,22 +6,25 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ChatRoom from "./pages/ChatRoom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const Router = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<App />} />
+      <AuthProvider>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route index element={<App />} />
 
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/chat" element={<ChatRoom />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/chat" element={<ChatRoom />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
