@@ -47,12 +47,16 @@ wss.on('connection', (ws: WebSocket, req) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; username: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string };
     console.log('인증된 사용자:', decoded);
 
     ws.on('message', async (message) => {
-      const newMessage = new Message({ sender: decoded.userId, content: message });
-      await newMessage.save();
+      const newMessage = new Message({ sender: decoded.id, content: message });
+      try {
+        await newMessage.save();
+      } catch (error) {
+        console.log('mongoose error:', error);
+      }
 
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -61,6 +65,7 @@ wss.on('connection', (ws: WebSocket, req) => {
       });
     });
   } catch (error) {
+    console.log(error);
     ws.close();
   }
 
