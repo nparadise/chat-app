@@ -57,54 +57,56 @@ const Register = () => {
   };
 
   return (
-    <form
-      onSubmit={signup}
-      className="box-content w-xs p-4 space-y-4 rounded-sm shadow-lg bg-white dark:bg-neutral-800 dark:text-white"
-    >
-      <h2 className="text-center text-2xl font-bold">Sign Up</h2>
-      <div>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          className="block w-full p-2 rounded-xs outline-blue-700 bg-neutral-200 text-black"
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className="block w-full p-2 rounded-xs outline-blue-700 bg-neutral-200 text-black"
-        />
-      </div>
-      <div>
-        <label htmlFor="confirm-password">Confirm Password</label>
-        <input
-          type="password"
-          id="confirm-password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          className="block w-full p-2 rounded-xs outline-blue-700 bg-neutral-200 text-black"
-        />
-      </div>
-      {errorMessage !== "" ? (
-        <p className="w-full text-red-600 text-wrap">{errorMessage}</p>
-      ) : null}
-      <button
-        type="submit"
-        className="block mx-auto px-4 py-1.5 rounded-sm bg-blue-700 text-white font-bold"
+    <div className="flex size-full items-center justify-center">
+      <form
+        onSubmit={signup}
+        className="box-content w-xs space-y-4 rounded-sm bg-white p-4 shadow-lg dark:bg-neutral-800 dark:text-white"
       >
-        Sign Up
-      </button>
-    </form>
+        <h2 className="text-center text-2xl font-bold">Sign Up</h2>
+        <div>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="block w-full rounded-xs bg-neutral-200 p-2 text-black outline-blue-700"
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="block w-full rounded-xs bg-neutral-200 p-2 text-black outline-blue-700"
+          />
+        </div>
+        <div>
+          <label htmlFor="confirm-password">Confirm Password</label>
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="block w-full rounded-xs bg-neutral-200 p-2 text-black outline-blue-700"
+          />
+        </div>
+        {errorMessage !== "" ? (
+          <p className="w-full text-wrap text-red-600">{errorMessage}</p>
+        ) : null}
+        <button
+          type="submit"
+          className="mx-auto block rounded-sm bg-blue-700 px-4 py-1.5 font-bold text-white"
+        >
+          Sign Up
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
-import { Link, useNavigate } from "react-router";
-import { useAuth } from "./contexts/AuthContext";
 import axios from "axios";
+import { Link, useNavigate } from "react-router";
+
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
   // TODO: 미인증 상태와 인증 상태에서 다른 모양의 메인 페이지 구현
@@ -21,7 +22,7 @@ function App() {
   }
 
   return (
-    <>
+    <div className="flex h-full items-center justify-center">
       {user ? (
         <div>
           <p className="animate-appear-from-left font-serif text-2xl">
@@ -68,7 +69,7 @@ function App() {
           </Link>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

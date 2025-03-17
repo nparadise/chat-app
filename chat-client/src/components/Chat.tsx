@@ -20,13 +20,25 @@ const Chat = () => {
   };
 
   return (
-    <div className="mx-auto max-w-md p-4">
+    <div className="my-4 max-h-[calc(100dvh-8rem)] max-w-md">
       <h2 className="mb-2 text-xl font-bold">실시간 채팅</h2>
-      <div className="mb-2 min-h-60 min-w-xs overflow-auto border p-2">
-        {messages.map((message, index) => (
-          <p key={index} className="my-1 rounded bg-neutral-800 p-1 text-white">
-            {message.username}: {message.text}
-          </p>
+      <div className="mb-2 h-11/12 min-h-60 min-w-xs space-y-2 overflow-auto border p-2">
+        {messages.map((message, index, arr) => (
+          <>
+            {index === 0 || arr[index - 1].username !== message.username ? (
+              <p className="mb-1 w-fit rounded-sm text-black dark:text-white">
+                {message.username}
+              </p>
+            ) : (
+              ""
+            )}
+            <p
+              key={index}
+              className="w-fit rounded-sm bg-neutral-800 px-2 py-1 text-white"
+            >
+              {message.text}
+            </p>
+          </>
         ))}
       </div>
       <input
@@ -34,6 +46,7 @@ const Chat = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={onPressEnter}
+        placeholder="내용을 입력하세요"
         className="w-full border p-2"
       />
       <button

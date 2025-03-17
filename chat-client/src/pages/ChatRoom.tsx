@@ -9,7 +9,7 @@ const ChatRoom = () => {
   if (!user) return null;
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="mx-4 max-h-full flex-col justify-center sm:flex-row sm:gap-4 md:flex">
       <OnlineUsers />
       <Chat />
     </div>
