@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import useChat from "@hooks/useChat";
 
 const Chat = () => {
   const { messages, sendMessage } = useChat();
   const [input, setInput] = useState("");
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "instant" });
+  });
 
   const handleSendMessage = () => {
     if (input.trim()) {
@@ -22,7 +27,7 @@ const Chat = () => {
   return (
     <div className="my-4 max-h-[calc(100dvh-8rem)] max-w-md">
       <h2 className="mb-2 text-xl font-bold">실시간 채팅</h2>
-      <div className="mb-2 h-11/12 min-h-60 min-w-xs space-y-2 overflow-auto border p-2">
+      <div className="mb-2 h-[calc(100dvh-16rem)] min-h-60 min-w-xs space-y-2 overflow-y-scroll border p-2">
         {messages.map((message, index, arr) => (
           <>
             {message.username !== "alert" &&
@@ -48,6 +53,7 @@ const Chat = () => {
             </p>
           </>
         ))}
+        <div ref={bottomRef} />
       </div>
       <input
         type="text"
