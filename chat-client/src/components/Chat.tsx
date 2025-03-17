@@ -25,8 +25,12 @@ const Chat = () => {
       <div className="mb-2 h-11/12 min-h-60 min-w-xs space-y-2 overflow-auto border p-2">
         {messages.map((message, index, arr) => (
           <>
-            {index === 0 || arr[index - 1].username !== message.username ? (
-              <p className="mb-1 w-fit rounded-sm text-black dark:text-white">
+            {message.username !== "alert" &&
+            (index === 0 || arr[index - 1].username !== message.username) ? (
+              <p
+                key={`${index}-${message.username}`}
+                className="mb-1 w-fit rounded-sm text-black dark:text-white"
+              >
                 {message.username}
               </p>
             ) : (
@@ -34,7 +38,11 @@ const Chat = () => {
             )}
             <p
               key={index}
-              className="w-fit rounded-sm bg-neutral-800 px-2 py-1 text-white"
+              className={
+                message.username === "alert"
+                  ? "mx-auto w-fit text-sm text-neutral-300"
+                  : "w-fit rounded-sm bg-neutral-800 px-2 py-1 text-white"
+              }
             >
               {message.text}
             </p>

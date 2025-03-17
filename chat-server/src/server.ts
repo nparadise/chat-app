@@ -1,10 +1,11 @@
 import express from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
-import http from 'http';
+import https from 'https';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import fs from 'fs';
 
 import { connectDB } from './config/database';
 import { Message } from './models/messageModel';
@@ -30,8 +31,13 @@ interface ChatMessage {
   text: string;
 }
 
+const options = {
+  key: fs.readFileSync('../key.pem'),
+  cert: fs.readFileSync('../cert.pem'),
+};
+
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(options, app);
 const wss = new WebSocketServer({ server });
 
 const PORT = process.env.PORT || 5000;
@@ -41,7 +47,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://localhost:3000',
     credentials: true,
   })
 );

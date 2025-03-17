@@ -6,7 +6,7 @@ export const WebSocketProvider = ({ children }: React.PropsWithChildren) => {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:5000");
+    const socket = new WebSocket("wss://localhost:5000");
 
     socket.onopen = () => {
       console.log("WebSocket 연결");

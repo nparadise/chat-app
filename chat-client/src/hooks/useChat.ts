@@ -23,6 +23,14 @@ const useChat = () => {
 
     ws.addEventListener("message", handleChatMessage);
 
+    setMessages((prev) => [
+      ...prev,
+      {
+        username: "alert",
+        text: "채팅 서버에 연결되었습니다.",
+      },
+    ]);
+
     return () => {
       ws.removeEventListener("message", handleChatMessage);
     };
