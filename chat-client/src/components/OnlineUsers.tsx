@@ -35,7 +35,7 @@ const OnlineUsers = () => {
         </button>
       </div>
       <ul
-        className={`mt-2 min-w-48 border border-neutral-200 p-2 sm:block sm:min-h-60 ${openUserList ? "" : "hidden"}`}
+        className={`mt-2 min-w-48 border p-2 sm:block sm:min-h-60 dark:border-neutral-200 ${openUserList ? "" : "hidden"}`}
       >
         {onlineUsers.map((user) => (
           <li key={user} className="text-white">

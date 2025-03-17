@@ -45,8 +45,8 @@ const Chat = () => {
               key={index}
               className={
                 message.username === "alert"
-                  ? "mx-auto w-fit text-sm text-neutral-300"
-                  : "w-fit rounded-sm bg-neutral-800 px-2 py-1 text-white"
+                  ? "mx-auto w-fit text-sm text-neutral-600 dark:text-neutral-300"
+                  : "w-fit rounded-sm bg-blue-700 px-2 py-1 text-white dark:bg-neutral-800"
               }
             >
               {message.text}
@@ -66,7 +66,7 @@ const Chat = () => {
       <button
         type="button"
         onClick={handleSendMessage}
-        className="my-2 w-full bg-blue-500 p-2 text-white"
+        className="my-2 w-full bg-blue-700 p-2 text-white"
       >
         전송
       </button>
