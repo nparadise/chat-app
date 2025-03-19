@@ -8,32 +8,16 @@ import cors from 'cors';
 import fs from 'fs';
 
 import { connectDB } from './config/database';
-import { Message } from './models/messageModel';
 
 import authRoutes from './routers/authRoutes';
 import chatRoutes from './routers/chatRoutes';
+import { broadcastUserList, handleChatMessage, handleClose, handleJoin } from './webSocketHandlers';
 
 dotenv.config();
 
-interface ConnectedUser {
-  ws: WebSocket;
-  username: string;
-}
-
-type WebSocketMessage = TypeOnlyMessage | ChatMessage;
-
-interface TypeOnlyMessage {
-  type: 'join' | 'onlineUsers';
-}
-
-interface ChatMessage {
-  type: 'message';
-  text: string;
-}
-
 const options = {
-  key: fs.readFileSync('../key.pem'),
-  cert: fs.readFileSync('../cert.pem'),
+  key: fs.readFileSync(process.env.SSL_KEY_PATH || '../key.pem'),
+  cert: fs.readFileSync(process.env.SSL_CERT_PATH || '../cert.pem'),
 };
 
 const app = express();
@@ -59,9 +43,20 @@ app.use('/api/chat', chatRoutes);
 
 connectDB();
 
-const onlineUsers = new Map<WebSocket, string>();
+type WebSocketMessage = TypeOnlyMessage | ChatMessage;
 
+interface TypeOnlyMessage {
+  type: 'join' | 'onlineUsers';
+}
+
+interface ChatMessage {
+  type: 'message';
+  text: string;
+}
+
+// WebSocket 연결 시 이벤트 처리
 wss.on('connection', (ws: WebSocket, req) => {
+  // 인증 토큰 추출
   const cookies = req.headers.cookie;
   const token = cookies
     ?.split('; ')
@@ -74,6 +69,7 @@ wss.on('connection', (ws: WebSocket, req) => {
     return;
   }
 
+  // JWT 검증
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string };
     console.log('인증된 사용자:', decoded.username);
@@ -87,7 +83,7 @@ wss.on('connection', (ws: WebSocket, req) => {
           handleJoin(ws, decoded.username);
           break;
         case 'message':
-          await handleMessage(ws, decoded, parsedMessage.text);
+          await handleChatMessage(ws, decoded, parsedMessage.text);
           break;
         case 'onlineUsers':
           broadcastUserList();
@@ -106,42 +102,8 @@ wss.on('connection', (ws: WebSocket, req) => {
     return;
   }
 
-  ws.on('close', () => {
-    onlineUsers.delete(ws);
-    broadcastUserList();
-    console.log('클라이언트 연결 종료');
-  });
+  ws.on('close', handleClose);
 });
-
-function handleJoin(ws: WebSocket, username: string) {
-  onlineUsers.set(ws, username);
-  broadcastUserList();
-}
-
-async function handleMessage(ws: WebSocket, decoded: { id: string; username: string }, text: string) {
-  const newMessage = new Message({ sender: decoded.id, content: text });
-  try {
-    await newMessage.save();
-    broadcast({ type: 'message', username: decoded.username, text });
-  } catch (error) {
-    console.log('메시지 저장 실패:', (error as Error).message);
-    ws.send(JSON.stringify({ type: 'error', message: '메시지 저장 실패' }));
-  }
-}
-
-function broadcast(data: object) {
-  console.log('OUT:', data);
-  onlineUsers.forEach((_, ws) => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(data));
-    }
-  });
-}
-
-function broadcastUserList() {
-  const userList = Array.from(onlineUsers.values());
-  broadcast({ type: 'onlineUsers', users: userList });
-}
 
 server.listen(PORT, () => {
   console.log(`서버 실행 중: http://localhost:${PORT}`);
