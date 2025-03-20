@@ -1,19 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useWebSocket } from "@contexts/ChatContext";
 
 const useChat = () => {
-  const ws = useWebSocket();
+  const { ws, isConnected } = useWebSocket();
   const [messages, setMessages] = useState<
     { username: string; text: string }[]
   >([]);
+  const isMessageExist = useMemo(() => messages.length > 0, [messages]);
 
   useEffect(() => {
     if (!ws) return;
 
     const handleChatMessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-      if (data.type === "message") {
+      if (data.type === "message" && data.username && data.text) {
         setMessages((prev) => [
           ...prev,
           { username: data.username, text: data.text },
@@ -23,6 +24,25 @@ const useChat = () => {
 
     ws.addEventListener("message", handleChatMessage);
 
+    return () => {
+      ws.removeEventListener("message", handleChatMessage);
+    };
+  }, [ws]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      if (isMessageExist) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            username: "alert",
+            text: "채팅 서버 연결이 끊어졌습니다.",
+          },
+        ]);
+      }
+      return;
+    }
+
     setMessages((prev) => [
       ...prev,
       {
@@ -30,19 +50,17 @@ const useChat = () => {
         text: "채팅 서버에 연결되었습니다.",
       },
     ]);
-
-    return () => {
-      ws.removeEventListener("message", handleChatMessage);
-    };
-  }, [ws]);
+  }, [isConnected, isMessageExist]);
 
   const sendMessage = useCallback(
     (text: string) => {
-      if (ws) {
+      if (ws && isConnected) {
         ws.send(JSON.stringify({ type: "message", text }));
+      } else {
+        console.error("WebSocket이 연결되지 않았습니다.");
       }
     },
-    [ws],
+    [ws, isConnected],
   );
 
   return { messages, sendMessage };
