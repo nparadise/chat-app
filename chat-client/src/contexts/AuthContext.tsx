@@ -1,7 +1,8 @@
 import axios from "axios";
 import {
-  createContext,
   PropsWithChildren,
+  createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -17,7 +18,10 @@ interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   checkAuth(): Promise<void>;
-  login(username: string, password: string): Promise<string>;
+  login(
+    username: string,
+    password: string,
+  ): Promise<{ success: boolean; message: string }>;
   loading: boolean;
 }
 
@@ -28,7 +32,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async (): Promise<void> => {
     try {
       const res = await axios.get("/auth/me", { withCredentials: true });
       if (res.status !== 200) throw new Error(res.data.message);
@@ -37,42 +41,51 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setUser(userData);
     } catch (error) {
       setUser(null);
-      console.log(error);
+      console.error("인증 확인 중 오류 발생:", error);
     }
-  };
+  }, []);
 
-  const login = async (username: string, password: string): Promise<string> => {
-    let errorMessage: string = "";
-    setLoading(true);
+  const login = useCallback(
+    async (
+      username: string,
+      password: string,
+    ): Promise<{ success: boolean; message: string }> => {
+      setLoading(true);
 
-    try {
-      const res = await axios.post(
-        "/auth/login",
-        { username, password },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      try {
+        // 로그인 요청
+        const res = await axios.post<{ message: string }>(
+          "/auth/login",
+          { username, password },
+          {
+            withCredentials: true,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
-      if (res.status === 200) {
-        checkAuth();
-        navigate("/");
-      } else {
-        errorMessage = res.data.message;
+        // 로그인 성공 시 인증 정보 갱신 및 index 페이지로 이동
+        if (res.status === 200) {
+          checkAuth();
+          navigate("/");
+          return { success: true, message: res.data.message };
+        } else {
+          return { success: false, message: res.data.message };
+        }
+      } catch (error) {
+        console.error("로그인 중 오류 발생", error);
+        return { success: false, message: "로그인 중 서버 오류 발생했습니다." };
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      errorMessage = `${error}`;
-    }
-    setLoading(false);
-    return errorMessage;
-  };
+    },
+    [navigate, checkAuth],
+  );
 
   useEffect(() => {
     setLoading(true);
     checkAuth();
     setLoading(false);
-  }, []);
+  }, [checkAuth]);
 
   return (
     <AuthContext.Provider value={{ user, setUser, checkAuth, login, loading }}>

@@ -22,10 +22,10 @@ const Login = () => {
     const { username, password } = formData;
 
     try {
-      const errorMessage = await login(username, password);
-      setErrorMessage(errorMessage);
+      const data = await login(username, password);
+      setErrorMessage(data.message);
     } catch (error) {
-      console.log(error);
+      console.error("로그인 요청 에러:", error);
     }
   };
 
